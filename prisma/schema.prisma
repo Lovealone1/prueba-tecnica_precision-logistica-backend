@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum RouteStatus {
+  PENDING
+  IN_PROGRESS
+  DELIVERED
+}
+
+model Driver {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  cedula    String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  routes Route[]
+
+  @@map("drivers")
+}
+
+model Route {
+  id               String      @id @default(uuid()) @db.Uuid
+  vehiclePlate     String      @map("vehicle_plate")
+  originAddress    String      @map("origin_address")
+  deliveryAddress  String      @map("delivery_address")
+  scheduledDate    DateTime    @map("scheduled_date")
+  status           RouteStatus @default(PENDING)
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt @map("updated_at")
+
+  driverId String @map("driver_id") @db.Uuid
+  driver   Driver @relation(fields: [driverId], references: [id])
+
+  @@map("routes")
+}
