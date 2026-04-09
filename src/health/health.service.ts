@@ -9,7 +9,7 @@ export class HealthService {
     const start = Date.now();
 
     try {
-      await this.prisma.$queryRaw`SELECT 1`;
+      await this.prisma.client.$queryRaw`SELECT 1`;
       return {
         status: 'connected',
         latencyMs: Date.now() - start,
