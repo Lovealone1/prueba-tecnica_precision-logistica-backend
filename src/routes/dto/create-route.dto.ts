@@ -22,12 +22,13 @@ export class CreateRouteDto {
   vehiclePlate!: string;
 
   @ApiProperty({
-    description: 'Driver UUID assigned to this route',
-    example: '550e8400-e29b-41d4-a716-446655440000',
+    description: 'Name of the driver (resolved internally)',
+    example: 'Carlos',
   })
-  @IsUUID('4', { message: 'Driver ID must be a valid UUID' })
-  @IsNotEmpty({ message: 'Driver ID is required' })
-  driverId!: string;
+  @IsString()
+  @IsNotEmpty({ message: 'Driver name is required' })
+  @Transform(({ value }) => value?.trim())
+  driverName!: string;
 
   @ApiProperty({
     description: 'Address where the route begins',
@@ -48,10 +49,14 @@ export class CreateRouteDto {
   destinationZone!: string;
 
   @ApiProperty({
-    description: 'Scheduled date for the route in YYYY-MM-DD or standard ISO format',
-    example: '2026-04-10',
+    description: 'Scheduled date for the route in Colombian format (DD/MM/YYYY)',
+    example: '10/04/2026',
   })
-  @IsDateString({}, { message: 'Scheduled date must be a valid ISO date string (YYYY-MM-DD)' })
+  @IsString()
   @IsNotEmpty({ message: 'Scheduled date is required' })
+  @Matches(/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/(20\d\d)$/, {
+    message: 'Scheduled date must be in format DD/MM/YYYY',
+  })
+  @Transform(({ value }) => value?.trim())
   scheduledDate!: string;
 }
