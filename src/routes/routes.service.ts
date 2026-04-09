@@ -59,16 +59,30 @@ export class RoutesService {
     const targetDate = new Date(`${dateFormatted}T12:00:00.000Z`);
 
     // Regla de Negocio: Evitar doble asignación del mismo vehículo en el mismo día exacto
-    const conflictingRoute = await this.prisma.client.route.findFirst({
+    const conflictingVehicle = await this.prisma.client.route.findFirst({
       where: {
         vehiclePlate: dto.vehiclePlate,
         scheduledDate: targetDate,
       },
     });
 
-    if (conflictingRoute) {
+    if (conflictingVehicle) {
       throw new ConflictException(
-        `El vehículo con placa ${dto.vehiclePlate} ya tiene una ruta programada para el día ${dto.scheduledDate}. No se permite doble asignación.`,
+        `El vehículo con placa ${dto.vehiclePlate} ya tiene una ruta programada para el día ${dto.scheduledDate}.`,
+      );
+    }
+
+    // Regla de Negocio: Evitar que un conductor tenga múltiples rutas asignadas el mismo día
+    const conflictingDriver = await this.prisma.client.route.findFirst({
+      where: {
+        driverId: driver.id,
+        scheduledDate: targetDate,
+      },
+    });
+
+    if (conflictingDriver) {
+      throw new ConflictException(
+        `El conductor ${dto.driverName} ya tiene una ruta asignada para el día ${dto.scheduledDate}.`,
       );
     }
 
