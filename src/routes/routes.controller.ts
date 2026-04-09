@@ -41,11 +41,15 @@ export class RoutesController {
   @Patch(':id/status')
   @ApiOperation({
     summary: 'Update the status of a route',
-    description: 'Enforces strict state machine: PENDING -> IN_PROGRESS -> DELIVERED.',
+    description:
+      'Enforces strict state machine: PENDING -> IN_PROGRESS -> DELIVERED.',
   })
   @ApiParam({ name: 'id', description: 'Route UUID', format: 'uuid' })
   @ApiResponse({ status: 200, description: 'Status updated successfully' })
-  @ApiResponse({ status: 400, description: 'Invalid state transition attempted' })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid state transition attempted',
+  })
   @ApiResponse({ status: 404, description: 'Route not found' })
   updateStatus(
     @Param('id', ParseUUIDPipe) id: string,
@@ -57,9 +61,13 @@ export class RoutesController {
   @Get('plates')
   @ApiOperation({
     summary: 'Get uniquely existing vehicle plates',
-    description: 'Retrieves all active distinct vehicle plates for frontend dropdown usage.',
+    description:
+      'Retrieves all active distinct vehicle plates for frontend dropdown usage.',
   })
-  @ApiResponse({ status: 200, description: 'An array of strings representing plates' })
+  @ApiResponse({
+    status: 200,
+    description: 'An array of strings representing plates',
+  })
   getPlatesWithRoutes() {
     return this.routesService.getPlatesWithRoutes();
   }
@@ -67,11 +75,21 @@ export class RoutesController {
   @Get('vehicle/:plate')
   @ApiOperation({
     summary: 'List precise routes filtering tightly by isolated plate index',
-    description: 'Returns all scheduled logistics routes, actively grouping drivers and sorting sequentially.',
+    description:
+      'Returns all scheduled logistics routes, actively grouping drivers and sorting sequentially.',
   })
-  @ApiParam({ name: 'plate', description: 'Colombian vehicle Plate (e.g. ABC123)' })
-  @ApiResponse({ status: 200, description: 'Complete routes subset assigned properly.' })
-  @ApiResponse({ status: 404, description: 'Returns clean empty/not-found flag natively.' })
+  @ApiParam({
+    name: 'plate',
+    description: 'Colombian vehicle Plate (e.g. ABC123)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Complete routes subset assigned properly.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Returns clean empty/not-found flag natively.',
+  })
   findByVehiclePlate(@Param('plate') plate: string) {
     return this.routesService.findByVehiclePlate(plate);
   }

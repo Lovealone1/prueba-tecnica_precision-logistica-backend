@@ -10,7 +10,7 @@ import { todayColombia } from '../common/date/date.util';
 
 @Injectable()
 export class RoutesService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * Schedules a new route assignment for a vehicle.
@@ -205,6 +205,7 @@ export class RoutesService {
     }
 
     // Omitimos la llave foránea redundante 'driverId' porque ya incluimos el objeto relacional 'driver'
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return routes.map(({ driverId, ...routeData }) => routeData);
   }
 }

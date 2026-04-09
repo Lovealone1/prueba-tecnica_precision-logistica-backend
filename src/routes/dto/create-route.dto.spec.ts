@@ -29,7 +29,7 @@ describe('CreateRouteDto (Business Rules)', () => {
     it('debería lanzar error de validación si inicia con números (ej: 123ABC)', async () => {
       dto.vehiclePlate = '123ABC';
       const errors = await validate(dto);
-      
+
       expect(errors.length).toBeGreaterThan(0);
       expect(errors[0].property).toBe('vehiclePlate');
       expect(errors[0].constraints?.matches).toBeDefined();
@@ -38,14 +38,14 @@ describe('CreateRouteDto (Business Rules)', () => {
     it('debería lanzar error de validación si tiene 4 letras (ej: ABCD12)', async () => {
       dto.vehiclePlate = 'ABCD12';
       const errors = await validate(dto);
-      
+
       expect(errors.length).toBeGreaterThan(0);
     });
 
     it('debería lanzar error de validación si tiene menos caracteres geométricos (ej: AB12)', async () => {
       dto.vehiclePlate = 'AB12';
       const errors = await validate(dto);
-      
+
       expect(errors.length).toBeGreaterThan(0);
     });
   });

@@ -40,8 +40,8 @@ async function bootstrap() {
     .setTitle('Delivery Management Microservice')
     .setDescription(
       'REST API for managing driver delivery routes. ' +
-      'Allows registering the start and end of a delivery route, ' +
-      'showcasing best practices in architecture, validation and state management in NestJS.',
+        'Allows registering the start and end of a delivery route, ' +
+        'showcasing best practices in architecture, validation and state management in NestJS.',
     )
     .setVersion('1.0')
     .addBearerAuth()
