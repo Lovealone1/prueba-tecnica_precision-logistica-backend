@@ -208,4 +208,24 @@ export class RoutesService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return routes.map(({ driverId, ...routeData }) => routeData);
   }
+
+  /**
+   * Deletes a route by its ID.
+   *
+   * @param id - Route UUID.
+   * @throws {NotFoundException} If the route ID does not exist.
+   */
+  async remove(id: string) {
+    const route = await this.prisma.client.route.findUnique({
+      where: { id },
+    });
+
+    if (!route) {
+      throw new NotFoundException(`Ruta con ID '${id}' no encontrada.`);
+    }
+
+    return this.prisma.client.route.delete({
+      where: { id },
+    });
+  }
 }
