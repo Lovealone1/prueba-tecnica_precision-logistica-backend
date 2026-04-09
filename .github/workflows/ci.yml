@@ -1,0 +1,37 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        # Habilitar caché nativo para acelerar tiempos de npm ci
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Generate Prisma Client
+      # Generar los tipos de base de datos críticos para compilar y probar
+      run: npx prisma generate
+
+    - name: Run Linter Validation
+      # Verifica estrictamente que el código cumpla con los estándares
+      run: npm run lint
+
+    - name: Run Unit Tests
+      # Corre la suite de pruebas generada para Drivers y Routes
+      run: npm test
