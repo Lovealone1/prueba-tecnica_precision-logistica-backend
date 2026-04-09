@@ -5,7 +5,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateRouteDto } from './dto';
+import { CreateRouteDto, UpdateRouteStatusDto } from './dto';
 import { todayColombia } from '../common/date/date.util';
 
 @Injectable()
@@ -94,6 +94,53 @@ export class RoutesService {
         scheduledDate: targetDate,
         driverId: driver.id,
       },
+    });
+  }
+
+  /**
+   * Updates the status of a scheduled route applying strict state machine rules.
+   *
+   * @remarks
+   * Allowed directional transitions:
+   * - PENDING -> IN_PROGRESS
+   * - IN_PROGRESS -> DELIVERED
+   * - IN_PROGRESS -> PENDING (revert)
+   *
+   * @param id - Route UUID.
+   * @param dto - New requested status enum.
+   * @returns The updated route entity.
+   * @throws {NotFoundException} If the route ID does not exist.
+   * @throws {BadRequestException} If the transition skips a step or goes backwards.
+   */
+  async updateStatus(id: string, dto: UpdateRouteStatusDto) {
+    const route = await this.prisma.client.route.findUnique({
+      where: { id },
+    });
+
+    if (!route) {
+      throw new NotFoundException(`Route with ID '${id}' not found.`);
+    }
+
+    // Idempotency: if trying to update to the exact same status, just return it.
+    if (route.status === dto.status) {
+      return route;
+    }
+
+    // State Machine Validation Rule
+    const isValidTransition =
+      (route.status === 'PENDING' && dto.status === 'IN_PROGRESS') ||
+      (route.status === 'IN_PROGRESS' && dto.status === 'DELIVERED') ||
+      (route.status === 'IN_PROGRESS' && dto.status === 'PENDING');
+
+    if (!isValidTransition) {
+      throw new BadRequestException(
+        `Invalid status transition from ${route.status} to ${dto.status}.`,
+      );
+    }
+
+    return this.prisma.client.route.update({
+      where: { id },
+      data: { status: dto.status },
     });
   }
 }
