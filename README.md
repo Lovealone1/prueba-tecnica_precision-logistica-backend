@@ -1,8 +1,16 @@
 # Precisión Logística - Backend API
 
-Esta es la implementación técnica del Backend para la prueba de Precisión Logística. Desarrollada en **NestJS** y **PostgreSQL** (mediante Supabase y Prisma ORM), la API no solo cumple rigurosamente con los requerimientos originales del enunciado, sino que fue expandida para garantizar integridad comercial, tolerancia a fallos logísticos y escalabilidad demostrable para retornos de producción.
+<div align="center">
+  <img src="https://img.shields.io/badge/nestjs-%23E0234E.svg?style=for-the-badge&logo=nestjs&logoColor=white" alt="NestJS">
+  <img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL">
+  <img src="https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white" alt="Prisma">
+  <img src="https://img.shields.io/badge/-jest-%23C21325?style=for-the-badge&logo=jest&logoColor=white" alt="Jest">
+  <img src="https://img.shields.io/badge/-Swagger-%2385EA2D?style=for-the-badge&logo=swagger&logoColor=black" alt="Swagger">
+</div>
+<br/>
 
- **Despliegue en Vivo:** *(Próximamente disponible en Railway - [Link por definir])*
+Esta es la implementación técnica del Backend para la prueba de Precisión Logística. Desarrollada en **NestJS** y **PostgreSQL** (mediante Supabase y Prisma ORM), la API no solo cumple rigurosamente con los requerimientos originales del enunciado, sino que fue expandida para garantizar integridad comercial, tolerancia a fallos logísticos y escalabilidad demostrable para retornos de producción.
 
 ---
 
