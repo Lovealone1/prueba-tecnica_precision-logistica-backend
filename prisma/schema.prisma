@@ -28,7 +28,7 @@ model Route {
   id               String      @id @default(uuid()) @db.Uuid
   vehiclePlate     String      @map("vehicle_plate")
   originAddress    String      @map("origin_address")
-  deliveryAddress  String      @map("delivery_address")
+  destinationZone  String      @map("destination_zone")
   scheduledDate    DateTime    @map("scheduled_date")
   status           RouteStatus @default(PENDING)
   createdAt        DateTime    @default(now()) @map("created_at")
@@ -37,5 +37,6 @@ model Route {
   driverId String @map("driver_id") @db.Uuid
   driver   Driver @relation(fields: [driverId], references: [id])
 
+  @@index([vehiclePlate])
   @@map("routes")
 }
