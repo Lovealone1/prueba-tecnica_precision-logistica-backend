@@ -74,7 +74,7 @@ npx prisma generate
 
 4. **Arrancar Servidor API:**
 ```bash
-npm run start:dev
+pnpm start:dev
 ```
 Servidor desplegado de base escuchará sobre `http://localhost:3000/api`. Podrás acceder al panel entero testeable abriendo `http://localhost:3000/api/docs`.
 
@@ -84,5 +84,5 @@ Servidor desplegado de base escuchará sobre `http://localhost:3000/api`. Podrá
 
 El proyecto contiene el cubrimiento de lógica de negocio basica y validación de expresiones regulares aislado:
 ```bash
-npm run test
+pnpm test
 ```
