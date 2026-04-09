@@ -37,4 +37,4 @@ RUN npx prisma generate
 RUN pnpm run build
 
 # Start the application
-CMD [ "sh", "-c", "npx prisma migrate deploy && node dist/main" ]
+CMD [ "sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
