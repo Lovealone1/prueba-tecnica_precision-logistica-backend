@@ -8,7 +8,7 @@ import { CreateDriverDto, UpdateDriverDto } from './dto';
 
 @Injectable()
 export class DriversService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(dto: CreateDriverDto) {
     const existing = await this.prisma.client.driver.findUnique({
@@ -73,7 +73,7 @@ export class DriversService {
     } catch (error) {
       if ((error as { code?: string })?.code === 'P2003') {
         throw new ConflictException(
-          'No se puede eliminar de la base de datos a un conductor que tiene rutas vinculadas.',
+          'Cannot delete a driver that has routes linked.',
         );
       }
       throw error;
