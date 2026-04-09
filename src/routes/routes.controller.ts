@@ -3,6 +3,7 @@ import {
   Post,
   Patch,
   Get,
+  Delete,
   Body,
   Param,
   ParseUUIDPipe,
@@ -92,5 +93,18 @@ export class RoutesController {
   })
   findByVehiclePlate(@Param('plate') plate: string) {
     return this.routesService.findByVehiclePlate(plate);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Delete a route',
+    description: 'Removes a scheduled route permanently by its ID',
+  })
+  @ApiParam({ name: 'id', description: 'Route UUID', format: 'uuid' })
+  @ApiResponse({ status: 204, description: 'Route successfully deleted' })
+  @ApiResponse({ status: 404, description: 'Route not found' })
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.routesService.remove(id);
   }
 }
