@@ -15,6 +15,7 @@ Esta es la implementación técnica del Backend para la prueba de Precisión Log
 Para facilitar la revisión de la prueba técnica, el backend ha sido desplegado en Railway y se puede acceder a través del enlace fijado en este repositorio.
 
 La aplicación se encuentra dockerizada para garantizar la consistencia del entorno. El flujo de despliegue utiliza una imagen base de node:22-slim y gestiona automáticamente las migraciones de la base de datos (Prisma) antes del inicio del servidor. 
+
 ---
 
 ## Valor Agregado y Decisiones Arquitectónicas 
