@@ -30,6 +30,9 @@ RUN pnpm install --frozen-lockfile
 # Copy everything else
 COPY . .
 
+# Generate Prisma Client explicitly natively to establish typescript types before compiling
+RUN npx prisma generate
+
 # Build NestJS app
 RUN pnpm run build
 
