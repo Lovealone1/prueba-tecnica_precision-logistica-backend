@@ -68,7 +68,7 @@ export class RoutesService {
 
     if (conflictingVehicle) {
       throw new ConflictException(
-        `El vehículo con placa ${dto.vehiclePlate} ya tiene una ruta programada para el día ${dto.scheduledDate}.`,
+        `Vehicle with plate ${dto.vehiclePlate} is already scheduled for a route on ${dto.scheduledDate}.`,
       );
     }
 
@@ -82,7 +82,7 @@ export class RoutesService {
 
     if (conflictingDriver) {
       throw new ConflictException(
-        `El conductor ${dto.driverName} ya tiene una ruta asignada para el día ${dto.scheduledDate}.`,
+        `Driver ${dto.driverName} is already assigned to a route on ${dto.scheduledDate}.`,
       );
     }
 
@@ -118,21 +118,33 @@ export class RoutesService {
     });
 
     if (!route) {
-      throw new NotFoundException(`Route with ID '${id}' not found.`);
+      throw new NotFoundException(`Ruta con ID '${id}' no encontrada.`);
     }
 
-    // Idempotency: if trying to update to the exact same status, just return it.
+    // Idempotencia: si se intenta actualizar al mismo estado, se devuelve la ruta.
     if (route.status === dto.status) {
       return route;
     }
 
-    // State Machine Validation Rule
+    // Validación de estado
     const isValidTransition =
       (route.status === 'PENDING' && dto.status === 'IN_PROGRESS') ||
       (route.status === 'IN_PROGRESS' && dto.status === 'DELIVERED') ||
       (route.status === 'IN_PROGRESS' && dto.status === 'PENDING');
 
     if (!isValidTransition) {
+      // Manejo de errores específicos según la combinación anómala
+      if (route.status === 'PENDING' && dto.status === 'DELIVERED') {
+        throw new BadRequestException(
+          'Cannot complete a route that has never been started.',
+        );
+      }
+      if (route.status === 'DELIVERED') {
+        throw new BadRequestException(
+          'Cannot modify the status of a route that has already been delivered.',
+        );
+      }
+
       throw new BadRequestException(
         `Invalid status transition from ${route.status} to ${dto.status}.`,
       );
@@ -142,5 +154,57 @@ export class RoutesService {
       where: { id },
       data: { status: dto.status },
     });
+  }
+
+  /**
+   * Retrieves a unique, deduplicated list of vehicle plates that have at least one scheduled route.
+   */
+  async getPlatesWithRoutes() {
+    const uniqueRoutes = await this.prisma.client.route.findMany({
+      select: {
+        vehiclePlate: true,
+      },
+      distinct: ['vehiclePlate'],
+    });
+
+    return uniqueRoutes.map((route) => route.vehiclePlate);
+  }
+
+  /**
+   * Retrieves all route assignments aggressively optimized under the vehiclePlate Index.
+   * Includes explicitly safe joined Driver data preventing data over-exposure.
+   *
+   * @param vehiclePlate Exact vehicle plate string
+   */
+  async findByVehiclePlate(vehiclePlate: string) {
+    const routes = await this.prisma.client.route.findMany({
+      where: {
+        vehiclePlate: {
+          equals: vehiclePlate,
+          mode: 'insensitive',
+        },
+      },
+      include: {
+        driver: {
+          select: {
+            id: true,
+            name: true,
+            cedula: true,
+          },
+        },
+      },
+      orderBy: {
+        scheduledDate: 'desc',
+      },
+    });
+
+    if (!routes || routes.length === 0) {
+      throw new NotFoundException(
+        `No routes found scheduled for vehicle plate '${vehiclePlate}'.`,
+      );
+    }
+
+    // Omitimos la llave foránea redundante 'driverId' porque ya incluimos el objeto relacional 'driver'
+    return routes.map(({ driverId, ...routeData }) => routeData);
   }
 }

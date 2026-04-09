@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   Patch,
+  Get,
   Body,
   Param,
   ParseUUIDPipe,
@@ -51,5 +52,27 @@ export class RoutesController {
     @Body() dto: UpdateRouteStatusDto,
   ) {
     return this.routesService.updateStatus(id, dto);
+  }
+
+  @Get('plates')
+  @ApiOperation({
+    summary: 'Get uniquely existing vehicle plates',
+    description: 'Retrieves all active distinct vehicle plates for frontend dropdown usage.',
+  })
+  @ApiResponse({ status: 200, description: 'An array of strings representing plates' })
+  getPlatesWithRoutes() {
+    return this.routesService.getPlatesWithRoutes();
+  }
+
+  @Get('vehicle/:plate')
+  @ApiOperation({
+    summary: 'List precise routes filtering tightly by isolated plate index',
+    description: 'Returns all scheduled logistics routes, actively grouping drivers and sorting sequentially.',
+  })
+  @ApiParam({ name: 'plate', description: 'Colombian vehicle Plate (e.g. ABC123)' })
+  @ApiResponse({ status: 200, description: 'Complete routes subset assigned properly.' })
+  @ApiResponse({ status: 404, description: 'Returns clean empty/not-found flag natively.' })
+  findByVehiclePlate(@Param('plate') plate: string) {
+    return this.routesService.findByVehiclePlate(plate);
   }
 }

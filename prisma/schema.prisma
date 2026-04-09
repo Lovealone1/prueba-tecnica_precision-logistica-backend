@@ -37,5 +37,6 @@ model Route {
   driverId String @map("driver_id") @db.Uuid
   driver   Driver @relation(fields: [driverId], references: [id])
 
+  @@index([vehiclePlate])
   @@map("routes")
 }
