@@ -6,7 +6,14 @@ import { RouteStatus } from '@prisma/client';
 
 describe('RoutesService (State Machine)', () => {
   let service: RoutesService;
-  let prismaService: any;
+  let prismaService: {
+    client: {
+      route: {
+        findUnique: jest.Mock;
+        update: jest.Mock;
+      };
+    };
+  };
 
   // Mock espía simplificado aislado de integraciones Postgres
   const mockPrismaClient = {
@@ -30,21 +37,25 @@ describe('RoutesService (State Machine)', () => {
     }).compile();
 
     service = module.get<RoutesService>(RoutesService);
-    prismaService = module.get<PrismaService>(PrismaService);
+    prismaService = module.get<PrismaService>(
+      PrismaService,
+    ) as unknown as typeof prismaService;
     jest.clearAllMocks();
   });
 
   describe('updateStatus', () => {
     it('debería permitir la transición inicial obligatoria: PENDING -> IN_PROGRESS', async () => {
       const mockRoute = { id: '#ruta1', status: RouteStatus.PENDING };
-      
+
       prismaService.client.route.findUnique.mockResolvedValue(mockRoute);
-      prismaService.client.route.update.mockResolvedValue({ 
-        ...mockRoute, 
-        status: RouteStatus.IN_PROGRESS 
+      prismaService.client.route.update.mockResolvedValue({
+        ...mockRoute,
+        status: RouteStatus.IN_PROGRESS,
       });
 
-      const result = await service.updateStatus('#ruta1', { status: RouteStatus.IN_PROGRESS });
+      const result = await service.updateStatus('#ruta1', {
+        status: RouteStatus.IN_PROGRESS,
+      });
       expect(result.status).toBe(RouteStatus.IN_PROGRESS);
       expect(prismaService.client.route.update).toHaveBeenCalled();
     });
@@ -56,11 +67,11 @@ describe('RoutesService (State Machine)', () => {
 
       // Verificamos estricta y rígidamente: Error Arrojado HTTP 400 + Mensaje de texto explícito
       await expect(
-        service.updateStatus('#ruta1', { status: RouteStatus.DELIVERED })
+        service.updateStatus('#ruta1', { status: RouteStatus.DELIVERED }),
       ).rejects.toThrow(BadRequestException);
 
       await expect(
-        service.updateStatus('#ruta1', { status: RouteStatus.DELIVERED })
+        service.updateStatus('#ruta1', { status: RouteStatus.DELIVERED }),
       ).rejects.toThrow('Cannot complete a route that has never been started.');
 
       // Validamos férreamente que Prisma NUNCA debió ejecutar la inyección al DB!
@@ -69,14 +80,16 @@ describe('RoutesService (State Machine)', () => {
 
     it('debería permitir PENDING devuelta si estaba IN_PROGRESS (por si el camión se daña)', async () => {
       const mockRoute = { id: '#ruta2', status: RouteStatus.IN_PROGRESS };
-      
+
       prismaService.client.route.findUnique.mockResolvedValue(mockRoute);
-      prismaService.client.route.update.mockResolvedValue({ 
-        ...mockRoute, 
-        status: RouteStatus.PENDING 
+      prismaService.client.route.update.mockResolvedValue({
+        ...mockRoute,
+        status: RouteStatus.PENDING,
       });
 
-      const result = await service.updateStatus('#ruta2', { status: RouteStatus.PENDING });
+      const result = await service.updateStatus('#ruta2', {
+        status: RouteStatus.PENDING,
+      });
       expect(result.status).toBe(RouteStatus.PENDING);
     });
   });

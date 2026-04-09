@@ -10,12 +10,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { DriversService } from './drivers.service';
 import { CreateDriverDto, UpdateDriverDto } from './dto';
 
@@ -29,7 +24,10 @@ export class DriversController {
   @ApiOperation({ summary: 'Register a new driver' })
   @ApiResponse({ status: 201, description: 'Driver successfully created' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
-  @ApiResponse({ status: 409, description: 'Driver with this cédula already exists' })
+  @ApiResponse({
+    status: 409,
+    description: 'Driver with this cédula already exists',
+  })
   create(@Body() dto: CreateDriverDto) {
     return this.driversService.create(dto);
   }
@@ -55,11 +53,11 @@ export class DriversController {
   @ApiParam({ name: 'id', description: 'Driver UUID', format: 'uuid' })
   @ApiResponse({ status: 200, description: 'Driver successfully updated' })
   @ApiResponse({ status: 404, description: 'Driver not found' })
-  @ApiResponse({ status: 409, description: 'Cédula conflict with another driver' })
-  update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: UpdateDriverDto,
-  ) {
+  @ApiResponse({
+    status: 409,
+    description: 'Cédula conflict with another driver',
+  })
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateDriverDto) {
     return this.driversService.update(id, dto);
   }
 

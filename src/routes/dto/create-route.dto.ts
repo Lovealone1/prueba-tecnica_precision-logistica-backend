@@ -1,10 +1,5 @@
-import {
-  IsString,
-  IsNotEmpty,
-  Matches,
-  IsUUID,
-  IsDateString,
-} from 'class-validator';
+/* eslint-disable @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
+import { IsString, IsNotEmpty, Matches } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -49,7 +44,8 @@ export class CreateRouteDto {
   destinationZone!: string;
 
   @ApiProperty({
-    description: 'Scheduled date for the route in Colombian format (DD/MM/YYYY)',
+    description:
+      'Scheduled date for the route in Colombian format (DD/MM/YYYY)',
     example: '10/04/2026',
   })
   @IsString()

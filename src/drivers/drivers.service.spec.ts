@@ -5,7 +5,17 @@ import { ConflictException, NotFoundException } from '@nestjs/common';
 
 describe('DriversService', () => {
   let service: DriversService;
-  let prismaService: any; // We use any to quickly mock the highly dynamic client structure
+  let prismaService: {
+    client: {
+      driver: {
+        findUnique: jest.Mock;
+        findMany: jest.Mock;
+        create: jest.Mock;
+        update: jest.Mock;
+        delete: jest.Mock;
+      };
+    };
+  };
 
   // Objeto Mock (Espía) de Prisma
   const mockPrismaClient = {
@@ -32,7 +42,9 @@ describe('DriversService', () => {
     }).compile();
 
     service = module.get<DriversService>(DriversService);
-    prismaService = module.get<PrismaService>(PrismaService);
+    prismaService = module.get<PrismaService>(
+      PrismaService,
+    ) as unknown as typeof prismaService;
 
     // Limpiamos los espías entre cada prueba
     jest.clearAllMocks();
@@ -80,14 +92,14 @@ describe('DriversService', () => {
       const createDto = { name: 'Pedro', cedula: '999999' };
       const existingDriver = { id: 'uuid-existente', ...createDto };
 
-      // Simulamos que la base de datos EN 
+      // Simulamos que la base de datos EN
       // CONTRÓ un driver con esta cédula
       prismaService.client.driver.findUnique.mockResolvedValue(existingDriver);
 
       await expect(service.create(createDto)).rejects.toThrow(
         ConflictException,
       );
-      
+
       // Aseguramos de que create NUNCA se haya llamado si falló la validación
       expect(prismaService.client.driver.create).not.toHaveBeenCalled();
     });

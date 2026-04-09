@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import {
   IsString,
   IsNotEmpty,
@@ -32,7 +33,8 @@ export class CreateDriverDto {
   @IsString()
   @IsNotEmpty({ message: 'Cédula is required' })
   @Matches(/^\d{6,12}$/, {
-    message: 'Cédula must contain only digits and be between 6 and 12 characters',
+    message:
+      'Cédula must contain only digits and be between 6 and 12 characters',
   })
   @Transform(({ value }) => value?.trim())
   cedula!: string;
